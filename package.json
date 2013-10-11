@@ -1,0 +1,39 @@
+{
+  "name": "reflip",
+  "version": "0.0.1",
+  "description": "key-value-store-backed feature flipping middleware for connect/express.js",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -R spec test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ceejbot/reflip.git"
+  },
+  "keywords": [
+    "connect",
+    "express.js",
+    "middleware",
+    "feature",
+    "feature",
+    "flip",
+    "a/b",
+    "testing"
+  ],
+  "author": "C J Silverio <ceejceej@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceejbot/reflip/issues"
+  },
+  "dependencies": {
+    "bluebird": "~0.8.0-3",
+    "lodash": "~2.2.1"
+  },
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "mocha": "~1.13.0"
+  }
+}

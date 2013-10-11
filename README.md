@@ -50,14 +50,8 @@ reflip.register('aardvarks', 'boolean', function(request)
 });
   
 var app = express();
-app.use(express.bodyParser());
-app.use(flash());
-app.use(express.methodOverride());
-app.use(express.cookieParser());
 app.use(express.session());
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.csrf());
+// all the middlewares
 app.use(reflip.features());
 
 app.get('/aarvarks', serveArdvarks);
