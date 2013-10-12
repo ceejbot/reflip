@@ -1,6 +1,6 @@
 # reflip
 
-Redis-backed feature flipping middleware for connect/express.js. Or levelup-backed. Or any key-value store-backed.
+Redis-backed feature flipping middleware for connect/express.js.
 
 ## API
 
@@ -43,7 +43,7 @@ var reflip = new Reflip(
     refresh: 60
 });
 
-reflip.register('aardvarks', 'boolean', function(request)
+reflip.register('aardvarks', 'custom', function(request)
 {
     // may also return a promise?
     return reflip.check('aardvark-enabled') && !!request.user;
