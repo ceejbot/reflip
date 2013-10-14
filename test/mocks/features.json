@@ -2,5 +2,27 @@
 	"ttl": 60000,
 	"features":
 	[
+		{
+			"name": "aardvarks",
+			"type": "boolean",
+			"enabled": true
+		},
+		{
+			"name": "archaeopteryx",
+			"type": "boolean",
+			"enabled": false
+		},
+		{
+			"name": "anteaters",
+			"type": "metered",
+			"enabled": true,
+			"chance": 25
+		},
+		{
+			"name": "alpacas",
+			"type": "grouped",
+			"enabled": true,
+			"groups": [ "a", "b", "c" ]
+		}
 	]
 }

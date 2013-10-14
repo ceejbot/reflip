@@ -2,6 +2,10 @@
 
 Redis-backed or file-backed feature flipping middleware for connect/express.js. It should be straightforward to write additional storage adapters.
 
+[![Build Status](https://secure.travis-ci.org/ceejbot/reflip.png)](http://travis-ci.org/ceejbot/reflip) [![Dependencies](https://david-dm.org/ceejbot/reflip.png)](https://david-dm.org/ceejbot/reflip) 
+
+[![NPM](https://nodei.co/npm/reflip.png)](https://nodei.co/npm/reflip/)
+
 ## API
 
 ### new Reflip(options)
@@ -9,7 +13,7 @@ Redis-backed or file-backed feature flipping middleware for connect/express.js. 
 The options object may include the following fields:
 
 - `storage`: a storage adapter; can be nil if you are operating from a predefined object only
-- `ttl`: refresh interval in milliseconds; defaults to 300,000
+- `ttl`: refresh interval in milliseconds; defaults to 5 minutes
 - `default`: default response for unknown features; defaults to `false`
 - `httpcode`: the status code to use when blocking requests for disabled features; defaults to 404 
 - `features`: an object pre-defining feature defaults; is overridden after `ttl` milliseconds by the values in remote storage if that is enabled
@@ -44,6 +48,49 @@ app.get('/anteaters', reflip.gate('anteaters'), serveAnteaters);
 ### reflip.refresh()
 
 Forces the adapter layer to refresh; normally called by the interval timer. Returns a promise that resolves when the lookup is complete. Updates the list of features completely, adding new ones and removing older ones. Also updates the timeout.
+
+## File adapter
+
+Usage: `storage = new Reflip.FileAdapter({ filename: './features.json'});`
+
+Example file:
+
+```javascript
+{
+    "ttl": 60000,
+    "features":
+    [
+        {
+            "name": "aardvarks",
+            "type": "boolean",
+            "enabled": true
+        },
+        {
+            "name": "archaeopteryx",
+            "type": "boolean",
+            "enabled": false
+        },
+        {
+            "name": "anteaters",
+            "type": "metered",
+            "enabled": true,
+            "chance": 25
+        },
+        {
+            "name": "alpacas",
+            "type": "grouped",
+            "enabled": true,
+            "groups": [ "a", "b", "c" ]
+        }
+    ]
+}
+```
+
+## Redis adapter
+
+TBD
+
+
 
 ## Example
 
@@ -91,12 +138,6 @@ function serveAnteaters(request, response)
     response.render('anteaters');
 }
 ```
-
-## Implementation notes
-
-Middleware runs through all known features & builds a structure recording their values for the current request. It then decorates the request with the function `check()`. This function takes a string feature name & returns response synchronously.
-
-Should note here what this implies about the data stored in whatever the backing store is.
 
 ## LICENSE
 
