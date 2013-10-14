@@ -23,7 +23,7 @@
 	"bugs": { "url": "https://github.com/ceejbot/reflip/issues" },
 	"dependencies":
 	{
-		"bluebird": "~0.8.0-3",
+		"bluebird": "~0.8.3-0",
 		"lodash":   "~2.2.1",
 		"redis":    "~0.8.6"
 	},
