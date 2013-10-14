@@ -6,6 +6,53 @@ Redis-backed or file-backed feature flipping middleware for connect/express.js. 
 
 [![NPM](https://nodei.co/npm/reflip.png)](https://nodei.co/npm/reflip/)
 
+## Example
+
+```javascript
+var Reflip = require('reflip'),
+    express = require('express');
+  
+var reflip = new Reflip(
+{
+    storage: new Reflip.RedisAdapter(
+    { 
+        client: redis.createClient(), 
+        namespace: 'myapp'
+    }),
+    ttl: 60 * 1000
+});
+
+reflip.register('aardvarks', 'custom', function(request)
+{
+    return reflip.check('aardvark-enabled') && !!request.user;
+});
+  
+var app = express();
+app.use(express.session()); // etc
+app.use(reflip.flip());
+
+app.get('/aarvarks', serveArdvarks);
+app.get('/anteaters', reflip.gate('anteaters'), serveAnteaters);
+
+function serveArdvarks(request, response)
+{
+    // has access to the session info; can make exciting decisions
+    if (!request.check('ardvarks') || request.session.alpacasPreferred)
+    {
+        response.redirect('/alpacas');
+        return;
+    }
+    
+    response.render('aardvarks');
+}
+
+function serveAnteaters(request, response)
+{
+    // if we reach here at all, the anteater feature is enabled
+    response.render('anteaters');
+}
+```
+
 ## API
 
 ### new Reflip(options)
@@ -89,55 +136,6 @@ Example file:
 ## Redis adapter
 
 TBD
-
-
-
-## Example
-
-```javascript
-var Reflip = require('reflip'),
-    express = require('express');
-  
-var reflip = new Reflip(
-{
-    storage: new Reflip.RedisAdapter(
-    { 
-        client: redis.createClient(), 
-        namespace: 'myapp'
-    }),
-    ttl: 60 * 1000
-});
-
-reflip.register('aardvarks', 'custom', function(request)
-{
-    return reflip.check('aardvark-enabled') && !!request.user;
-});
-  
-var app = express();
-app.use(express.session()); // etc
-app.use(reflip.flip());
-
-app.get('/aarvarks', serveArdvarks);
-app.get('/anteaters', reflip.gate('anteaters'), serveAnteaters);
-
-function serveArdvarks(request, response)
-{
-    // has access to the session info; can make exciting decisions
-    if (!request.check('ardvarks') || request.session.alpacasPreferred)
-    {
-        response.redirect('/alpacas');
-        return;
-    }
-    
-    response.render('aardvarks');
-}
-
-function serveAnteaters(request, response)
-{
-    // if we reach here at all, the anteater feature is enabled
-    response.render('anteaters');
-}
-```
 
 ## LICENSE
 

@@ -3,9 +3,9 @@ var
 	assert       = require('assert'),
 	http         = require('http'),
 	P            = require('bluebird'),
-	Feature      = require('./feature'),
-	FileAdapter  = require('./file'),
-	RedisAdapter = require('./redis'),
+	Feature      = require('./lib/feature'),
+	FileAdapter  = require('./lib/file'),
+	RedisAdapter = require('./lib/redis')
 	;
 
 var Reflip = module.exports = function(opts)
@@ -15,11 +15,13 @@ var Reflip = module.exports = function(opts)
 
 	this.options = opts;
 
-	if (opts.storage) this.storage = opts.self.storage;
+	if (opts.storage) this.storage = opts.storage;
 	if (opts.features) this.features = opts.features;
 	if (opts.hasOwnProperty('default')) this.default = opts.default;
 	if (opts.httpcode) this.httpcode = opts.httpcode;
 	if (opts.ttl) this.ttl = opts.ttl;
+
+	this.refresh();
 };
 
 Reflip.FileAdapter  = FileAdapter;
@@ -33,6 +35,7 @@ Reflip.prototype.storage      = null;
 Reflip.prototype.features     = {};
 Reflip.prototype.default      = false;
 Reflip.prototype.httpcode     = 404;
+Reflip.prototype.ready        = false;
 
 Reflip.prototype.flip = function()
 {
@@ -86,11 +89,11 @@ Reflip.prototype.makeKey = function makeKey(base)
 Reflip.prototype.refresh = function refresh()
 {
 	if (!this.storage)
-		return P();
+		return P(true);
 
 	var self = this;
 
-	self.storage.refresh()
+	return self.storage.refresh()
 	.then(function(response)
 	{
 		if (response.hasOwnProperty('ttl'))
@@ -107,6 +110,8 @@ Reflip.prototype.refresh = function refresh()
 			var feature = new Feature(def);
 			self.features[feature.name] = feature;
 		})
-	})
-	.done();
+
+		this.ready = true;
+		return true;
+	});
 };
