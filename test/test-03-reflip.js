@@ -15,24 +15,41 @@ describe('Reflip', function()
 {
 	it('tests exist');
 
+	describe('flip()', function()
+	{
+		it('tests exist');
+		it('returns a function');
+	});
+
+	describe('gate()', function()
+	{
+		it('tests exist');
+		it('returns a function');
+	});
+
 
 	describe('with file adapter', function()
 	{
 		it('can be constructed', function()
 		{
-			var adapter = new Reflip.FileAdapter({ filename: testfile });
 			var flipper = new Reflip(
 			{
-				storage: adapter,
+				storage: new Reflip.FileAdapter({ filename: testfile }),
 			});
 
-
+			assert.isObject(flipper);
 
 		});
 
 
 
 	});
+
+	describe('with redis adapter', function()
+	{
+		it('tests exist');
+	});
+
 
 
 });

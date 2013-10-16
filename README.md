@@ -96,6 +96,23 @@ app.get('/anteaters', reflip.gate('anteaters'), serveAnteaters);
 
 Forces the adapter layer to refresh; normally called by the interval timer. Returns a promise that resolves when the lookup is complete. Updates the list of features completely, adding new ones and removing older ones. Also updates the timeout.
 
+## Feature
+
+The feature object represents a feature that can be flipped on or off.
+
+```javascript
+var feature = new Reflip.Feature(
+{
+    name: 'anteaters',
+    type: 'metered',
+    chance: 50,
+});
+```
+
+Valid types: boolean, metered, groups.
+
+[[ describe each ]]
+
 ## File adapter
 
 Usage: `storage = new Reflip.FileAdapter({ filename: './features.json'});`
