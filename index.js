@@ -1,8 +1,10 @@
 var
 	_            = require('lodash'),
 	assert       = require('assert'),
+	events       = require('events'),
 	http         = require('http'),
 	P            = require('bluebird'),
+	util         = require('util'),
 	Feature      = require('./lib/feature'),
 	FileAdapter  = require('./lib/file'),
 	RedisAdapter = require('./lib/redis')
@@ -10,10 +12,10 @@ var
 
 var Reflip = module.exports = function(opts)
 {
+	events.EventEmitter.call(this);
+
 	assert(opts, 'You must pass options to the Reflip constructor');
 	assert(opts.storage || opts.features, 'You must pass either storage options or a pre-set feature object');
-
-	this.options = opts;
 
 	if (opts.storage) this.storage = opts.storage;
 	if (opts.features) this.features = opts.features;
@@ -23,19 +25,18 @@ var Reflip = module.exports = function(opts)
 
 	this.refresh();
 };
+util.inherits(Reflip, events.EventEmitter);
 
 Reflip.FileAdapter  = FileAdapter;
 Reflip.RedisAdapter = RedisAdapter;
 Reflip.Feature      = Feature;
 
-Reflip.prototype.options      = {};
 Reflip.prototype.ttl          = 5 * 60 * 1000; // 5 minutes
 Reflip.prototype.refreshTimer = null;
 Reflip.prototype.storage      = null;
 Reflip.prototype.features     = {};
 Reflip.prototype.default      = false;
 Reflip.prototype.httpcode     = 404;
-Reflip.prototype.ready        = false;
 
 Reflip.prototype.flip = function()
 {
@@ -61,12 +62,12 @@ Reflip.prototype.flip = function()
 	}
 
 	return middleware;
-
 };
 
 Reflip.prototype.gate = function gate(name)
 {
 	var self = this;
+	assert(name && name.length, 'You must provide a feature name');
 
 	function gateFunc(request, response, next)
 	{
@@ -81,6 +82,17 @@ Reflip.prototype.gate = function gate(name)
 	return gateFunc;
 };
 
+Reflip.prototype.register = function register(name, func)
+{
+	this.features[name] = new Feature(
+	{
+		name: name,
+		type: 'custom',
+		enabled: true,
+		checker: func
+	});
+};
+
 Reflip.prototype.makeKey = function makeKey(base)
 {
 	return this.namespace + base;
@@ -89,9 +101,10 @@ Reflip.prototype.makeKey = function makeKey(base)
 Reflip.prototype.refresh = function refresh()
 {
 	if (!this.storage)
-		return P(true);
+		return P.cast(true);
 
 	var self = this;
+	this.emit('refreshing');
 
 	return self.storage.refresh()
 	.then(function(response)
@@ -111,7 +124,7 @@ Reflip.prototype.refresh = function refresh()
 			self.features[feature.name] = feature;
 		})
 
-		this.ready = true;
+		self.emit('ready');
 		return true;
 	});
 };
