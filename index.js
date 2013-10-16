@@ -93,11 +93,6 @@ Reflip.prototype.register = function register(name, func)
 	});
 };
 
-Reflip.prototype.makeKey = function makeKey(base)
-{
-	return this.namespace + base;
-};
-
 Reflip.prototype.refresh = function refresh()
 {
 	if (!this.storage)
@@ -122,7 +117,7 @@ Reflip.prototype.refresh = function refresh()
 		{
 			var feature = new Feature(def);
 			self.features[feature.name] = feature;
-		})
+		});
 
 		self.emit('ready');
 		return true;

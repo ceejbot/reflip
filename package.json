@@ -13,15 +13,15 @@
 	},
 	"scripts":
 	{
-		"test": "mocha -R spec test/*.js",
-		"testtravis": "mocha -R spec test/*.js && mocha --require blanket -R travis-cov test/*.js",
+		"test-suites": "mocha -R spec test/*.js",
+		"test": "mocha -R spec test/*.js && mocha --require blanket -R travis-cov test/*.js",
 		"test-cov": "mocha --require blanket -R travis-cov test/*.js",
 		"coverage": "mocha --require blanket -R html-cov test/*.js > test/coverage.html",
 		"blanket":
 		{
 			"pattern": "//^((?!\/node_modules|test\/).)*$/ig"
 		},
-		"travis-cov": { "threshold": 70 }
+		"travis-cov": { "threshold": 80 }
 	},
 	"repository":
 	{

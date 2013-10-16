@@ -33,13 +33,13 @@ describe('FileAdapter', function()
 
 	it('can be constructed', function()
 	{
-		var obj = new FileAdapter({ filename: testfile })
+		var obj = new FileAdapter({ filename: testfile });
 		assert.ok(obj);
 	});
 
 	it('refresh returns a promise', function()
 	{
-		var obj = new FileAdapter({ filename: testfile })
+		var obj = new FileAdapter({ filename: testfile });
 		var result = obj.refresh();
 		assert.ok(result);
 		assert.isObject(result);
@@ -49,7 +49,7 @@ describe('FileAdapter', function()
 
 	it('refresh re-reads the file', function(done)
 	{
-		var obj = new FileAdapter({ filename: testfile })
+		var obj = new FileAdapter({ filename: testfile });
 
 		obj.refresh()
 		.then(function(reply)
@@ -66,6 +66,5 @@ describe('FileAdapter', function()
 		{
 			assert.ok(!err);
 		}).done();
-
 	});
 });
