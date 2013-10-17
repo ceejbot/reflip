@@ -1,18 +1,41 @@
 /*global describe:true, it:true, before:true, after:true */
 
 var
+	_      = require('lodash'),
 	chai   = require('chai'),
 	assert = chai.assert,
 	expect = chai.expect,
 	should = chai.should(),
-	redis  = require('redis')
+	redis  = require('redis'),
+	fs     = require('fs')
 	;
 
 var RedisAdapter = require('../lib/redis');
 
+var testFeatures = require('./mocks/features.json');
 
 describe('RedisAdapter', function()
 {
+	before(function(done)
+	{
+		var r = redis.createClient();
+		var chain = r.multi();
+
+		var features = [];
+		_.each(testFeatures.features, function(item)
+		{
+			features.push(item.name);
+			chain.hmset('reflip:' + item.name, item);
+		});
+		chain.set('reflip:ttl', testFeatures.ttl);
+		chain.sadd('reflip:features', features);
+
+		chain.exec(function(err, replies)
+		{
+			done();
+		});
+	});
+
 	it('requires an options object', function()
 	{
 		function shouldThrow() { var r = new RedisAdapter(); }
@@ -53,7 +76,51 @@ describe('RedisAdapter', function()
 		client.end();
 	});
 
-	it('refresh returns a promise');
+	it('refresh returns a promise', function()
+	{
+		var client = redis.createClient();
+		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
 
-	it('refresh re-reads the hashes');
+		var result = r.refresh();
+		assert.ok(result);
+		assert.isObject(result);
+		assert.property(result, 'then');
+		assert.isFunction(result.then);
+	});
+
+	it('refresh reads the hashes', function(done)
+	{
+		var client = redis.createClient();
+		var r = new RedisAdapter({ client: client });
+
+		r.refresh()
+		.then(function(result)
+		{
+			console.log('refresh ran');
+			console.log(result);
+			done();
+		})
+		.fail(function(err)
+		{
+			should.not.exist(err);
+		}).done();
+	});
+
+	after(function(done)
+	{
+		var r = redis.createClient();
+		var chain = r.multi();
+
+		chain.del('reflip:ttl');
+		chain.del('reflip:features');
+		_.each(Object.keys(testFeatures.features), function(k)
+		{
+			chain.del('reflip:' + k);
+		});
+		chain.exec(function(err, replies)
+		{
+			done();
+		});
+
+	});
 });
