@@ -31,9 +31,9 @@
 	"bugs": { "url": "https://github.com/ceejbot/reflip/issues" },
 	"dependencies":
 	{
-		"bluebird": "~0.8.3-0",
-		"lodash":   "~2.2.1",
-		"redis":    "~0.8.6"
+		"bluebird": "latest",
+		"lodash":   "latest",
+		"redis":    "latest"
 	},
 	"optionalDependencies":
 	{
@@ -42,10 +42,10 @@
 	},
 	"devDependencies":
 	{
-		"chai":       "~1.8.1",
-		"mocha":      "~1.13.0",
-		"sinon":      "~1.7.3",
-		"blanket":    "*",
-		"travis-cov": "*"
+		"chai":       "latest",
+		"mocha":      "latest",
+		"sinon":      "latest",
+		"blanket":    "latest",
+		"travis-cov": "latest"
 	}
 }
