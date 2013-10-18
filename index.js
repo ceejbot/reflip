@@ -53,7 +53,7 @@ Reflip.prototype.flip = function()
 
 		request.check = function(name)
 		{
-			if (!request.features[name])
+			if (!request.features.hasOwnProperty(name))
 				return self.default;
 
 			return request.features[name];

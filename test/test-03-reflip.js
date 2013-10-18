@@ -138,6 +138,7 @@ describe('Reflip', function()
 					assert.ok(request.features.alpacas, 'alpacas are not enabled');
 					assert.isTrue(request.features.aardvarks, 'anteaters are not enabled');
 					assert.equal(request.features.archaeopteryx, request.check('archaeopteryx'), 'feature cache and feature check() are returning different values');
+					assert.equal(request.check('alligator'), flipper.default);
 					done();
 				});
 		});
