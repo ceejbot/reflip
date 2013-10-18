@@ -96,31 +96,19 @@ describe('RedisAdapter', function()
 		r.refresh()
 		.then(function(result)
 		{
-			console.log('refresh ran');
-			console.log(result);
+			assert.ok(result, 'did not get a result back from refresh()');
+			assert.isObject(result, 'refresh() did not resolve to an object');
+			assert.property(result, 'ttl', 'refresh() result did not include a ttl');
+			assert.equal(result.ttl, testFeatures.ttl, 'ttl was not the expected value');
+
+			assert.property(result, 'features');
+			assert.isArray(result.features, 'result.features not an array');
+			assert.equal(result.features.length, testFeatures.features.length);
+
 			done();
-		})
-		.fail(function(err)
+		}, function(err)
 		{
 			should.not.exist(err);
 		}).done();
-	});
-
-	after(function(done)
-	{
-		var r = redis.createClient();
-		var chain = r.multi();
-
-		chain.del('reflip:ttl');
-		chain.del('reflip:features');
-		_.each(Object.keys(testFeatures.features), function(k)
-		{
-			chain.del('reflip:' + k);
-		});
-		chain.exec(function(err, replies)
-		{
-			done();
-		});
-
 	});
 });

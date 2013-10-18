@@ -1,16 +1,19 @@
 /*global describe:true, it:true, before:true, after:true */
 
 var
+	_      = require('lodash'),
 	chai   = require('chai'),
 	assert = chai.assert,
 	expect = chai.expect,
 	should = chai.should(),
 	path   = require('path'),
+	redis  = require('redis'),
 	sinon  = require('sinon')
 	;
 
 var Reflip = require('../index');
 var testfile = path.join(__dirname, './mocks/features.json');
+var testFeatures = require('./mocks/features.json');
 
 describe('Reflip', function()
 {
@@ -42,7 +45,24 @@ describe('Reflip', function()
 
 	describe('with redis adapter', function()
 	{
-		it('tests exist');
+		it('can be constructed', function()
+		{
+			var flipper = new Reflip({ storage: new Reflip.RedisAdapter({ client: redis.createClient() }), });
+			assert.isObject(flipper);
+		});
+
+		it('calls refresh on its adapter', function(done)
+		{
+			var flipper = new Reflip({ storage: new Reflip.RedisAdapter({ client: redis.createClient() }), });
+			flipper.on('ready', function()
+			{
+				assert.isObject(flipper.refreshTimer);
+				assert.equal(flipper.ttl, 60000);
+				assert.isObject(flipper.features);
+				assert.equal(Object.keys(flipper.features).length, 4);
+				done();
+			});
+		});
 	});
 
 	describe('register()', function()
@@ -187,6 +207,23 @@ describe('Reflip', function()
 			assert.equal(arg.message, 'Not Found');
 		});
 
+	});
+
+	after(function(done)
+	{
+		var r = redis.createClient();
+		var chain = r.multi();
+
+		chain.del('reflip:ttl');
+		chain.del('reflip:features');
+		_.each(Object.keys(testFeatures.features), function(k)
+		{
+			chain.del('reflip:' + k);
+		});
+		chain.exec(function(err, replies)
+		{
+			done();
+		});
 	});
 
 });
