@@ -17,7 +17,7 @@ var reflip = new Reflip(
     storage: new Reflip.RedisAdapter(
     { 
         client: redis.createClient(), 
-        namespace: 'myapp'
+        namespace: 'myapp:'
     }),
     ttl: 60 * 1000
 });
@@ -109,9 +109,21 @@ var feature = new Reflip.Feature(
 });
 ```
 
-Valid types: boolean, metered, groups.
+Valid types: 
 
-[[ describe each ]]
+* `boolean`: on or off.
+* `metered`: the feature has a percent chance of being turned on
+* `grouped`: a list of possible values for the feature, each of which has an equal chance of appearing; useful for rudimentary a/b testing
+* `custom`: you provide the function used to decide if the feature is enabled. The checker function is given the express request object to use to make its decision.
+
+Valid feature fields:
+
+* `name`: required, string name of feature
+* `type`: required; string type of feature
+* `enabled`: boolean, used for boolean features
+* `groups`: array, used for grouped features
+* `chance`: number from 0-100, used for metered features
+* `checker`: called by check() in lieu of other decision-making; used for custom features
 
 ## File adapter
 
@@ -152,7 +164,19 @@ Example file:
 
 ## Redis adapter
 
-TBD
+```javascript
+var storage = new Reflip.RedisAdapter(
+{
+    client: redis.createClient(), // or supply `host` and `port` fields
+    namespace: 'key-prefix:'      // optional
+});
+```
+
+The redis adapter expects to find the following keys:
+
+* `key-prefix:ttl`: integer giving time until next refresh, in milliseconds
+* `key-prefix:features`: set giving string feature names
+* `key-prefix:<name>`: hash, one per feature. The hash is passed directly to the Feature constructur as documented above.
 
 ## LICENSE
 
