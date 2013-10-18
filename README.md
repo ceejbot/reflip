@@ -176,7 +176,7 @@ The redis adapter expects to find the following keys:
 
 * `key-prefix:ttl`: integer giving time until next refresh, in milliseconds
 * `key-prefix:features`: set giving string feature names
-* `key-prefix:<name>`: hash, one per feature. The hash is passed directly to the Feature constructur as documented above.
+* `key-prefix:<name>`: hash, one per feature. The hash is passed directly to the Feature constructor as documented above.
 
 ## LICENSE
 
