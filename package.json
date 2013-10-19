@@ -13,9 +13,11 @@
 	},
 	"scripts":
 	{
-		"test-suites": "mocha -R spec test/*.js",
+		"test":       "npm run test-suite && npm run coveralls && npm run test-cov",
+		"test-suite": "mocha -R spec test/*.js",
 		"test": "mocha -R spec test/*.js && mocha --require blanket -R travis-cov test/*.js",
 		"test-cov": "mocha --require blanket -R travis-cov test/*.js",
+		"coveralls":  "NODE_ENV=test YOURPACKAGE_COVERAGE=1 ./node_modules/.bin/mocha --require blanket --reporter mocha-lcov-reporter test/*.js | ./node_modules/coveralls/bin/coveralls.js",
 		"coverage": "mocha --require blanket -R html-cov test/*.js > test/coverage.html",
 		"blanket":
 		{
@@ -42,10 +44,12 @@
 	},
 	"devDependencies":
 	{
-		"chai":       "latest",
-		"mocha":      "latest",
-		"sinon":      "latest",
-		"blanket":    "latest",
-		"travis-cov": "latest"
+		"chai":                "latest",
+		"mocha":               "latest",
+		"sinon":               "latest",
+		"blanket":             "latest",
+		"travis-cov":          "latest",
+		"mocha-lcov-reporter": "latest",
+		"coveralls":           "latest"
 	}
 }

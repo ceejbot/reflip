@@ -2,7 +2,7 @@
 
 Redis-backed or file-backed feature flipping middleware for connect/express.js. It should be straightforward to write additional storage adapters.
 
-[![Build Status](https://secure.travis-ci.org/ceejbot/reflip.png)](http://travis-ci.org/ceejbot/reflip) [![Dependencies](https://david-dm.org/ceejbot/reflip.png)](https://david-dm.org/ceejbot/reflip) 
+[![Build Status](https://secure.travis-ci.org/ceejbot/reflip.png)](http://travis-ci.org/ceejbot/reflip) [![Dependencies](https://david-dm.org/ceejbot/reflip.png)](https://david-dm.org/ceejbot/reflip) [![Coverage Status](https://coveralls.io/repos/ceejbot/reflip/badge.png)](https://coveralls.io/r/ceejbot/reflip)
 
 [![NPM](https://nodei.co/npm/reflip.png)](https://nodei.co/npm/reflip/)
 
@@ -177,6 +177,10 @@ The redis adapter expects to find the following keys:
 * `key-prefix:ttl`: integer giving time until next refresh, in milliseconds
 * `key-prefix:features`: set giving string feature names
 * `key-prefix:<name>`: hash, one per feature. The hash is passed directly to the Feature constructor as documented above.
+
+## TODO
+
+The module should work well as a express middleware right now. However, it would be nice to have conveniences for adding/editing/removing feature switches from redis, out of band of the Reflip instance (since it is intended to update itself periodically). Maybe a tiny web app that does nothing but update redis?
 
 ## LICENSE
 
