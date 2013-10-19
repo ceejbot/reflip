@@ -31,13 +31,13 @@ var app = express();
 app.use(express.session()); // etc
 app.use(reflip.flip());
 
-app.get('/aarvarks', serveArdvarks);
+app.get('/aardvarks', serveArdvarks);
 app.get('/anteaters', reflip.gate('anteaters'), serveAnteaters);
 
 function serveArdvarks(request, response)
 {
     // has access to the session info; can make exciting decisions
-    if (!request.check('ardvarks') || request.session.alpacasPreferred)
+    if (!request.check('aardvarks') || request.session.alpacasPreferred)
     {
         response.redirect('/alpacas');
         return;
