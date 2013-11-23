@@ -2,10 +2,7 @@
 
 var
 	_      = require('lodash'),
-	chai   = require('chai'),
-	assert = chai.assert,
-	expect = chai.expect,
-	should = chai.should(),
+	demand = require('must'),
 	path   = require('path'),
 	redis  = require('redis'),
 	sinon  = require('sinon')
@@ -26,7 +23,7 @@ describe('Reflip', function()
 				storage: new Reflip.FileAdapter({ filename: testfile }),
 			});
 
-			assert.isObject(flipper);
+			flipper.must.be.an.object();
 		});
 
 		it('calls refresh on its adapter', function(done)
@@ -34,10 +31,10 @@ describe('Reflip', function()
 			var flipper = new Reflip({ storage: new Reflip.FileAdapter({ filename: testfile }), });
 			flipper.on('ready', function()
 			{
-				assert.isObject(flipper.refreshTimer);
-				assert.equal(flipper.ttl, 60000);
-				assert.isObject(flipper.features);
-				assert.equal(Object.keys(flipper.features).length, 4);
+				flipper.refreshTimer.must.be.an.object();
+				flipper.ttl.must.equal(60000);
+				flipper.features.must.be.an.object();
+				Object.keys(flipper.features).length.must.equal(4);
 				done();
 			});
 		});
@@ -48,7 +45,7 @@ describe('Reflip', function()
 		it('can be constructed', function()
 		{
 			var flipper = new Reflip({ storage: new Reflip.RedisAdapter({ client: redis.createClient() }), });
-			assert.isObject(flipper);
+			flipper.must.be.an.object();
 		});
 
 		it('calls refresh on its adapter', function(done)
@@ -56,10 +53,10 @@ describe('Reflip', function()
 			var flipper = new Reflip({ storage: new Reflip.RedisAdapter({ client: redis.createClient() }), });
 			flipper.on('ready', function()
 			{
-				assert.isObject(flipper.refreshTimer);
-				assert.equal(flipper.ttl, 60000);
-				assert.isObject(flipper.features);
-				assert.equal(Object.keys(flipper.features).length, 4);
+				flipper.refreshTimer.must.be.an.object();
+				flipper.ttl.must.equal(60000);
+				flipper.features.must.be.an.object();
+				Object.keys(flipper.features).length.must.equal(4);
 				done();
 			});
 		});
@@ -76,7 +73,7 @@ describe('Reflip', function()
 
 		it('is a function on the reflip object', function()
 		{
-			assert.isFunction(flipper.register);
+			flipper.register.must.be.a.function();
 		});
 
 		it('adds a feature to the reflip object', function()
@@ -84,9 +81,9 @@ describe('Reflip', function()
 			function check() { return true; }
 			flipper.register('anaconda', check);
 
-			assert.property(flipper.features, 'anaconda');
-			assert.equal(flipper.features.anaconda.type, 'custom');
-			assert.equal(flipper.features.anaconda.checker, check);
+			flipper.features.must.have.property('anaconda');
+			flipper.features.anaconda.type.must.equal('custom');
+			flipper.features.anaconda.checker.must.equal(check);
 		});
 
 		it('the checker function is called when the registered feature is checked', function()
@@ -96,8 +93,8 @@ describe('Reflip', function()
 			flipper.register('anaconda', check);
 
 			var feature = flipper.features.anaconda;
-			assert.equal(feature.check(), true);
-			assert.ok(check.called);
+			feature.check().must.equal(true);
+			check.called.must.be.truthy();
 		});
 
 	});
@@ -115,7 +112,7 @@ describe('Reflip', function()
 		it('returns a function', function()
 		{
 				var middleware = flipper.flip();
-				assert.isFunction(middleware);
+				middleware.must.be.a.function();
 		});
 
 		it('behaves like connect middleware', function()
@@ -124,7 +121,7 @@ describe('Reflip', function()
 				var request = {}, response = {}, next = sinon.spy();
 				middleware(request, response, next);
 
-				assert.ok(next.calledOnce);
+				next.calledOnce.must.be.truthy();
 		});
 
 		it('decorates its first argument with a check function', function(done)
@@ -133,12 +130,12 @@ describe('Reflip', function()
 				var request = {}, response = {};
 				middleware(request, response, function()
 				{
-					assert.isFunction(request.check, 'check is not a function!');
-					assert.isObject(request.features, 'request.features not set');
-					assert.ok(request.features.alpacas, 'alpacas are not enabled');
-					assert.isTrue(request.features.aardvarks, 'anteaters are not enabled');
-					assert.equal(request.features.archaeopteryx, request.check('archaeopteryx'), 'feature cache and feature check() are returning different values');
-					assert.equal(request.check('alligator'), flipper.default);
+					request.check.must.be.a.function();
+					request.features.must.be.an.object();
+					request.features.alpacas.must.be.truthy();
+					request.features.aardvarks.must.be.true();
+					request.features.archaeopteryx.must.equal(request.check('archaeopteryx'));
+					request.check('alligator').must.equal(flipper.default);
 					done();
 				});
 		});
@@ -161,13 +158,13 @@ describe('Reflip', function()
 				return flipper.gate();
 			}
 
-			assert.throws(shouldThrow);
+			shouldThrow.must.throw();
 		});
 
 		it('returns a function', function()
 		{
 				var gater = flipper.gate('archaeopteryx');
-				assert.isFunction(gater);
+				gater.must.be.a.function();
 		});
 
 		it('invokes its callback with no argument if the feature is enabled', function()
@@ -181,8 +178,8 @@ describe('Reflip', function()
 			var gater = flipper.gate('aardvarks');
 			gater(req, res, next);
 
-			assert.ok(req.check.calledOnce, 'check() not called');
-			assert.ok(next.calledOnce, 'next() not called');
+			req.check.calledOnce.must.be.truthy();
+			next.calledOnce.must.be.truthy();
 		});
 
 		it('invokes its callback with reflip.httpcode if the feature is disabled', function()
@@ -196,16 +193,16 @@ describe('Reflip', function()
 			var gater = flipper.gate('archaeopteryx');
 			gater(req, res, next);
 
-			assert.ok(req.check.calledOnce, 'check() not called');
-			assert.ok(next.calledOnce, 'next() not called');
+			req.check.calledOnce.must.be.truthy();
+			next.calledOnce.must.be.truthy();
 
 			var arglist = next.args[0];
-			assert.equal(arglist.length, 1);
+			arglist.length.must.equal(1);
 			var arg = arglist[0];
-			assert.property(arg, 'status', 'error has no status code!');
-			assert.equal(arg.status, 404);
-			assert.property(arg, 'message', 'error has no message!');
-			assert.equal(arg.message, 'Not Found');
+			arg.must.have.property('status');
+			arg.status.must.equal(404);
+			arg.must.have.property('message');
+			arg.message.must.equal('Not Found');
 		});
 
 	});

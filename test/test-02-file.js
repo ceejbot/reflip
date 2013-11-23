@@ -1,10 +1,7 @@
 /*global describe:true, it:true, before:true, after:true */
 
 var
-	chai   = require('chai'),
-	assert = chai.assert,
-	expect = chai.expect,
-	should = chai.should(),
+	demand = require('must'),
 	path   = require('path')
 	;
 
@@ -19,7 +16,7 @@ describe('FileAdapter', function()
 		{
 			var obj = new FileAdapter();
 		}
-		assert.throws(shouldThrow);
+		shouldThrow.must.throw();
 	});
 
 	it('requires options.filename', function()
@@ -28,23 +25,23 @@ describe('FileAdapter', function()
 		{
 			var obj = new FileAdapter({});
 		}
-		assert.throws(shouldThrow);
+		shouldThrow.must.throw();
 	});
 
 	it('can be constructed', function()
 	{
 		var obj = new FileAdapter({ filename: testfile });
-		assert.ok(obj);
+		obj.must.be.truthy();
 	});
 
 	it('refresh returns a promise', function()
 	{
 		var obj = new FileAdapter({ filename: testfile });
 		var result = obj.refresh();
-		assert.ok(result);
-		assert.isObject(result);
-		assert.property(result, 'then');
-		assert.isFunction(result.then);
+		result.must.be.truthy();
+		result.must.be.an.object();
+		result.must.have.property('then');
+		result.then.must.be.a.function();
 	});
 
 	it('refresh re-reads the file', function(done)
@@ -54,17 +51,17 @@ describe('FileAdapter', function()
 		obj.refresh()
 		.then(function(reply)
 		{
-			assert.ok(reply);
-			assert.isObject(reply);
-			assert.property(reply, 'ttl');
-			assert.equal(reply.ttl, 60000);
-			assert.property(reply, 'features');
-			assert.isArray(reply.features);
+			reply.must.be.truthy();
+			reply.must.be.an.object();
+			reply.must.have.property('ttl');
+			reply.ttl.must.equal(60000);
+			reply.must.have.property('features');
+			reply.features.must.be.an.array();
 
 			done();
 		}, function(err)
 		{
-			assert.ok(!err);
+			demand(err).be.undefined();
 		}).done();
 	});
 });

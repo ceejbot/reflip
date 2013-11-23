@@ -2,10 +2,7 @@
 
 var
 	_      = require('lodash'),
-	chai   = require('chai'),
-	assert = chai.assert,
-	expect = chai.expect,
-	should = chai.should(),
+	demand = require('must'),
 	redis  = require('redis'),
 	fs     = require('fs')
 	;
@@ -39,29 +36,29 @@ describe('RedisAdapter', function()
 	it('requires an options object', function()
 	{
 		function shouldThrow() { var r = new RedisAdapter(); }
-		assert.throws(shouldThrow);
+		shouldThrow.must.throw();
 	});
 
 	it('requires client or host/port in options', function()
 	{
 		function shouldThrow() { var r = new RedisAdapter({}); }
-		assert.throws(shouldThrow);
+		shouldThrow.must.throw();
 	});
 
 	it('respects the host/port options', function()
 	{
 		var r = new RedisAdapter({ host: 'localhost', port: 6379 });
-		assert.property(r, 'client');
-		assert.isObject(r.client);
+		r.must.have.property('client');
+		r.client.must.be.an.object();
 	});
 
 	it('respects the client option', function()
 	{
 		var client = redis.createClient();
 		var r = new RedisAdapter({ client: client });
-		assert.property(r, 'client');
-		assert.isObject(r.client);
-		assert.equal(r.client, client);
+		r.must.have.property('client');
+		r.client.must.be.an.object();
+		r.client.must.equal(client);
 		client.end();
 	});
 
@@ -71,7 +68,7 @@ describe('RedisAdapter', function()
 		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
 
 		var t = r.makeKey('features');
-		assert.ok(t.match(/^foozles:/));
+		t.match(/^foozles:/).must.be.truthy();
 
 		client.end();
 	});
@@ -82,10 +79,10 @@ describe('RedisAdapter', function()
 		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
 
 		var result = r.refresh();
-		assert.ok(result);
-		assert.isObject(result);
-		assert.property(result, 'then');
-		assert.isFunction(result.then);
+		result.must.be.truthy();
+		result.must.be.an.object();
+		result.must.have.property('then');
+		result.then.must.be.a.function();
 	});
 
 	it('refresh reads the hashes', function(done)
@@ -96,19 +93,19 @@ describe('RedisAdapter', function()
 		r.refresh()
 		.then(function(result)
 		{
-			assert.ok(result, 'did not get a result back from refresh()');
-			assert.isObject(result, 'refresh() did not resolve to an object');
-			assert.property(result, 'ttl', 'refresh() result did not include a ttl');
-			assert.equal(result.ttl, testFeatures.ttl, 'ttl was not the expected value');
+			result.must.be.truthy();
+			result.must.be.an.object();
+			result.must.have.property('ttl');
+			result.ttl.must.equal(testFeatures.ttl);
 
-			assert.property(result, 'features');
-			assert.isArray(result.features, 'result.features not an array');
-			assert.equal(result.features.length, testFeatures.features.length);
+			result.must.have.property('features');
+			result.features.must.be.an.array();
+			result.features.length.must.equal(testFeatures.features.length);
 
 			done();
 		}, function(err)
 		{
-			should.not.exist(err);
+			demand(err).be.undefined();
 		}).done();
 	});
 });
