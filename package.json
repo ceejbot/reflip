@@ -38,8 +38,7 @@
 	},
 	"optionalDependencies":
 	{
-		"redis":   "latest",
-		"hiredis": "latest"
+		"hiredis": "~0.1.15"
 	},
 	"devDependencies":
 	{

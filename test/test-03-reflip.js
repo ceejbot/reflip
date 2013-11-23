@@ -31,8 +31,10 @@ describe('Reflip', function()
 			var flipper = new Reflip({ storage: new Reflip.FileAdapter({ filename: testfile }), });
 			flipper.on('ready', function()
 			{
+				flipper.must.have.property('refreshTimer');
 				flipper.refreshTimer.must.be.an.object();
 				flipper.ttl.must.equal(60000);
+				flipper.must.have.property('features');
 				flipper.features.must.be.an.object();
 				Object.keys(flipper.features).length.must.equal(4);
 				done();
@@ -53,6 +55,7 @@ describe('Reflip', function()
 			var flipper = new Reflip({ storage: new Reflip.RedisAdapter({ client: redis.createClient() }), });
 			flipper.on('ready', function()
 			{
+				flipper.must.have.property('refreshTimer');
 				flipper.refreshTimer.must.be.an.object();
 				flipper.ttl.must.equal(60000);
 				flipper.features.must.be.an.object();
@@ -79,11 +82,11 @@ describe('Reflip', function()
 		it('adds a feature to the reflip object', function()
 		{
 			function check() { return true; }
-			flipper.register('anaconda', check);
+			flipper.register('aardwolf', check);
 
-			flipper.features.must.have.property('anaconda');
-			flipper.features.anaconda.type.must.equal('custom');
-			flipper.features.anaconda.checker.must.equal(check);
+			flipper.features.must.have.property('aardwolf');
+			flipper.features.aardwolf.type.must.equal('custom');
+			flipper.features.aardwolf.checker.must.equal(check);
 		});
 
 		it('the checker function is called when the registered feature is checked', function()
@@ -95,6 +98,19 @@ describe('Reflip', function()
 			var feature = flipper.features.anaconda;
 			feature.check().must.equal(true);
 			check.called.must.be.truthy();
+		});
+
+		it('can accept a Feature object argument', function()
+		{
+			var feature = new Reflip.Feature(
+			{
+				name:    'armadillo',
+				type:    'boolean',
+				enabled: true
+			});
+
+			flipper.register(feature);
+			flipper.features.must.have.property('armadillo');
 		});
 
 	});
@@ -135,7 +151,7 @@ describe('Reflip', function()
 					request.features.alpacas.must.be.truthy();
 					request.features.aardvarks.must.be.true();
 					request.features.archaeopteryx.must.equal(request.check('archaeopteryx'));
-					request.check('alligator').must.equal(flipper.default);
+					request.check('agouti').must.equal(flipper.default);
 					done();
 				});
 		});

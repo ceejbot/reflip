@@ -84,13 +84,21 @@ Reflip.prototype.gate = function gate(name)
 
 Reflip.prototype.register = function register(name, func)
 {
-	this.features[name] = new Feature(
+	var feat;
+	if (name instanceof Feature)
+		feat = name;
+	else
 	{
-		name: name,
-		type: 'custom',
-		enabled: true,
-		checker: func
-	});
+		feat = new Feature(
+		{
+			name: name,
+			type: 'custom',
+			enabled: true,
+			checker: func
+		});
+	}
+
+	this.features[feat.name] = feat;
 };
 
 Reflip.prototype.refresh = function refresh()
