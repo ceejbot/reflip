@@ -68,7 +68,7 @@ describe('RedisAdapter', function()
 		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
 
 		var t = r.makeKey('features');
-		t.match(/^foozles:/).must.be.truthy();
+		t.must.match(/^foozles:/);
 
 		client.end();
 	});
