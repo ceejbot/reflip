@@ -24,8 +24,9 @@ var Reflip = module.exports = function(opts)
 
 	if (opts.storage)
 	{
+		var self = this;
 		this.storage = opts.storage;
-		this.storage.on('update', this.update.bind(this));
+		this.storage.on('update', function(f) { self.update(f); });
 		this.refresh();
 	}
 };
