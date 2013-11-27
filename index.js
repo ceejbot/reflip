@@ -17,13 +17,17 @@ var Reflip = module.exports = function(opts)
 	assert(opts, 'You must pass options to the Reflip constructor');
 	assert(opts.storage || opts.features, 'You must pass either storage options or a pre-set feature object');
 
-	if (opts.storage) this.storage = opts.storage;
 	if (opts.features) this.features = opts.features;
 	if (opts.hasOwnProperty('default')) this.default = opts.default;
 	if (opts.httpcode) this.httpcode = opts.httpcode;
 	if (opts.ttl) this.ttl = opts.ttl;
 
-	this.refresh();
+	if (opts.storage)
+	{
+		this.storage = opts.storage;
+		this.storage.on('update', this.update.bind(this));
+		this.refresh();
+	}
 };
 util.inherits(Reflip, events.EventEmitter);
 
@@ -31,8 +35,6 @@ Reflip.FileAdapter  = FileAdapter;
 Reflip.RedisAdapter = RedisAdapter;
 Reflip.Feature      = Feature;
 
-Reflip.prototype.ttl          = 5 * 60 * 1000; // 5 minutes
-Reflip.prototype.refreshTimer = null;
 Reflip.prototype.storage      = null;
 Reflip.prototype.features     = {};
 Reflip.prototype.default      = false;
@@ -74,9 +76,7 @@ Reflip.prototype.gate = function gate(name)
 		if (request.check(name))
 			return next();
 
-		var error = new Error(http.STATUS_CODES[self.httpcode]);
-		error.status = self.httpcode;
-		return next(error);
+		response.send(self.httpcode, http.STATUS_CODES[self.httpcode]);
 	}
 
 	return gateFunc;
@@ -108,18 +108,9 @@ Reflip.prototype.refresh = function refresh()
 
 	var self = this;
 	this.emit('refreshing');
-
-	return self.storage.refresh()
+	self.storage.read()
 	.then(function(response)
 	{
-		if (response.hasOwnProperty('ttl'))
-			self.ttl = response.ttl;
-
-		if (self.ttl)
-			self.refreshTimer = setInterval(self.refresh.bind(self), self.ttl);
-		else
-			self.refreshTimer = null;
-
 		self.features = {};
 		_.each(response.features, function(def)
 		{
@@ -129,5 +120,17 @@ Reflip.prototype.refresh = function refresh()
 
 		self.emit('ready');
 		return true;
+	});
+};
+
+Reflip.prototype.update = function update(features)
+{
+	var self = this;
+
+	self.features = {};
+	_.each(response.features, function(def)
+	{
+		var feature = new Feature(def);
+		self.features[feature.name] = feature;
 	});
 };

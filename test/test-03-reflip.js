@@ -31,9 +31,7 @@ describe('Reflip', function()
 			var flipper = new Reflip({ storage: new Reflip.FileAdapter({ filename: testfile }), });
 			flipper.on('ready', function()
 			{
-				flipper.must.have.property('refreshTimer');
-				flipper.refreshTimer.must.be.an.object();
-				flipper.ttl.must.equal(60000);
+				flipper.must.have.property('storage');
 				flipper.must.have.property('features');
 				flipper.features.must.be.an.object();
 				Object.keys(flipper.features).length.must.equal(4);
@@ -55,9 +53,10 @@ describe('Reflip', function()
 			var flipper = new Reflip({ storage: new Reflip.RedisAdapter({ client: redis.createClient() }), });
 			flipper.on('ready', function()
 			{
-				flipper.must.have.property('refreshTimer');
-				flipper.refreshTimer.must.be.an.object();
-				flipper.ttl.must.equal(60000);
+				flipper.must.have.property('storage');
+				flipper.storage.must.have.property('refreshTimer');
+				flipper.storage.refreshTimer.must.be.an.object();
+				flipper.storage.ttl.must.equal(60000);
 				flipper.features.must.be.an.object();
 				Object.keys(flipper.features).length.must.equal(4);
 				done();
@@ -203,22 +202,21 @@ describe('Reflip', function()
 			var req = {}, res = {};
 			req.check = sinon.stub();
 			req.check.returns(false);
-
+			res.send = sinon.spy();
 			var next = sinon.spy();
 
 			var gater = flipper.gate('archaeopteryx');
 			gater(req, res, next);
 
 			req.check.calledOnce.must.be.truthy();
-			next.calledOnce.must.be.truthy();
+			res.send.calledOnce.must.be.truthy();
+			next.calledOnce.must.be.false();
 
-			var arglist = next.args[0];
-			arglist.length.must.equal(1);
-			var arg = arglist[0];
-			arg.must.have.property('status');
-			arg.status.must.equal(404);
-			arg.must.have.property('message');
-			arg.message.must.equal('Not Found');
+			var arglist = res.send.args[0];
+			arglist.length.must.equal(2);
+			arglist[0].must.equal(404);
+			arglist[1].must.be.a.string();
+			arglist[1].must.equal('Not Found');
 		});
 
 	});

@@ -2,11 +2,36 @@
 
 var
 	demand = require('must'),
+	fs     = require('fs'),
 	path   = require('path')
 	;
 
 var FileAdapter = require('../lib/file');
 var testfile = path.join(__dirname, './mocks/features.json');
+var file2 = path.join(__dirname, './mocks/f2.json');
+
+var features2 =
+{
+	"features":
+	[
+		{
+			"name": "aardvarks",
+			"type": "boolean",
+			"enabled": false
+		},
+		{
+			"name": "archaeopteryx",
+			"type": "boolean",
+			"enabled": true
+		},
+		{
+			"name": "aardwolf",
+			"type": "metered",
+			"enabled": true,
+			"chance": 25
+		}
+	]
+};
 
 describe('FileAdapter', function()
 {
@@ -34,21 +59,21 @@ describe('FileAdapter', function()
 		obj.must.be.truthy();
 	});
 
-	it('refresh returns a promise', function()
+	it('read() returns a promise', function()
 	{
 		var obj = new FileAdapter({ filename: testfile });
-		var result = obj.refresh();
+		var result = obj.read();
 		result.must.be.truthy();
 		result.must.be.an.object();
 		result.must.have.property('then');
 		result.then.must.be.a.function();
 	});
 
-	it('refresh re-reads the file', function(done)
+	it('read() re-reads the file', function(done)
 	{
 		var obj = new FileAdapter({ filename: testfile });
 
-		obj.refresh()
+		obj.read()
 		.then(function(reply)
 		{
 			reply.must.be.truthy();
@@ -63,5 +88,35 @@ describe('FileAdapter', function()
 		{
 			demand(err).be.undefined();
 		}).done();
+	});
+
+	it('observes file changes', function(done)
+	{
+		var count = 0;
+
+		var obj = new FileAdapter({ filename: file2 });
+		obj.must.have.property('watcher');
+		obj.on('update', function(features)
+		{
+			features.must.be.an.array();
+			count++;
+			if (features.length === 3)
+			{
+				count.must.equal(2);
+				done();
+			}
+		});
+
+		var ws = fs.createWriteStream(file2);
+		var rs = fs.createReadStream(testfile);
+		rs.pipe(ws);
+		ws.on('finish', function()
+		{
+			obj.read()
+			.then(function(data)
+			{
+				fs.writeFileSync(file2, JSON.stringify(features2));
+			});
+		});
 	});
 });
