@@ -24,8 +24,9 @@ var Reflip = module.exports = function(opts)
 
 	if (opts.storage)
 	{
+		var self = this;
 		this.storage = opts.storage;
-		this.storage.on('update', this.update.bind(this));
+		this.storage.on('update', function(f) { self.update(f); });
 		this.refresh();
 	}
 };
@@ -128,7 +129,7 @@ Reflip.prototype.update = function update(features)
 	var self = this;
 
 	self.features = {};
-	_.each(response.features, function(def)
+	_.each(features, function(def)
 	{
 		var feature = new Feature(def);
 		self.features[feature.name] = feature;
