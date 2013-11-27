@@ -73,24 +73,24 @@ describe('RedisAdapter', function()
 		client.end();
 	});
 
-	it('refresh returns a promise', function()
+	it('read() returns a promise', function()
 	{
 		var client = redis.createClient();
 		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
 
-		var result = r.refresh();
+		var result = r.read();
 		result.must.be.truthy();
 		result.must.be.an.object();
 		result.must.have.property('then');
 		result.then.must.be.a.function();
 	});
 
-	it('refresh reads the hashes', function(done)
+	it('read() reads the hashes', function(done)
 	{
 		var client = redis.createClient();
 		var r = new RedisAdapter({ client: client });
 
-		r.refresh()
+		r.read()
 		.then(function(result)
 		{
 			result.must.be.truthy();
