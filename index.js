@@ -128,7 +128,7 @@ Reflip.prototype.update = function update(features)
 	var self = this;
 
 	self.features = {};
-	_.each(response.features, function(def)
+	_.each(features, function(def)
 	{
 		var feature = new Feature(def);
 		self.features[feature.name] = feature;
