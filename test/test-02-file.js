@@ -9,6 +9,7 @@ var
 var FileAdapter = require('../lib/file');
 var testfile = path.join(__dirname, './mocks/features.json');
 var file2 = path.join(__dirname, './mocks/f2.json');
+var features1 = require(testfile);
 
 var features2 =
 {
@@ -92,31 +93,30 @@ describe('FileAdapter', function()
 
 	it('observes file changes', function(done)
 	{
-		var count = 0;
-
-		var obj = new FileAdapter({ filename: file2 });
-		obj.must.have.property('watcher');
-		obj.on('update', function(features)
+		fs.writeFile(file2, JSON.stringify(features1), function(err)
 		{
-			features.must.be.an.array();
-			count++;
-			if (features.length === 3)
+			var obj = new FileAdapter({ filename: file2 });
+			obj.must.have.property('watcher');
+			obj.on('update', function(features)
 			{
-				count.must.equal(2);
+				features.must.be.an.array();
+				features.length.must.equal(3);
 				done();
-			}
-		});
+			});
 
-		var ws = fs.createWriteStream(file2);
-		var rs = fs.createReadStream(testfile);
-		rs.pipe(ws);
-		ws.on('finish', function()
-		{
 			obj.read()
 			.then(function(data)
 			{
 				fs.writeFileSync(file2, JSON.stringify(features2));
 			});
+		});
+	});
+
+	after(function(done)
+	{
+		fs.unlink(file2, function(err)
+		{
+			done();
 		});
 	});
 });
