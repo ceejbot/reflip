@@ -17,9 +17,9 @@ var reflip = new Reflip(
     storage: new Reflip.RedisAdapter(
     { 
         client: redis.createClient(), 
-        namespace: 'myapp:'
+        namespace: 'myapp:',
+        ttl: 60 * 1000
     }),
-    ttl: 60 * 1000
 });
 
 reflip.register('aardvarks', 'custom', function(request)
@@ -67,7 +67,11 @@ The options object may include the following fields:
 
 ### reflip.register('feature-name', function(request) {})
 
-Register a custom feature name with a function that decides based on the request object if it is enabled or not. Can return a promise. (I think.)
+Register a custom feature name with a function that decides based on the request object if it is enabled or not. Can return a promise. (This is a lie; I need to make this work.)
+
+### reflip.register(new Reflip.Feature(opts))
+
+Register a pre-constructed feature that makes its decisions in any manner you define.
 
 ### reflip.flip()
 
