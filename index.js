@@ -20,7 +20,6 @@ var Reflip = module.exports = function(opts)
 	if (opts.features) this.features = opts.features;
 	if (opts.hasOwnProperty('default')) this.default = opts.default;
 	if (opts.httpcode) this.httpcode = opts.httpcode;
-	if (opts.ttl) this.ttl = opts.ttl;
 
 	if (opts.storage)
 	{

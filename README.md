@@ -60,7 +60,6 @@ function serveAnteaters(request, response)
 The options object may include the following fields:
 
 - `storage`: a storage adapter; can be nil if you are operating from a predefined object only
-- `ttl`: refresh interval in milliseconds; defaults to 5 minutes
 - `default`: default response for unknown features; defaults to `false`
 - `httpcode`: the status code to use when blocking requests for disabled features; defaults to 404 
 - `features`: an object pre-defining feature defaults; is overridden after `ttl` milliseconds by the values in remote storage if that is enabled
@@ -133,7 +132,6 @@ Example file:
 
 ```javascript
 {
-    "ttl": 60000,
     "features":
     [
         {
@@ -162,13 +160,16 @@ Example file:
 }
 ```
 
+The `ttl` field, if present in the features hash, is ignored. The file adapter uses `fs.watch()` to observe changes in the file. The [usual fs.watch() caveats](http://nodejs.org/api/fs.html#fs_fs_watch_filename_options_listener) apply.
+
 ## Redis adapter
 
 ```javascript
 var storage = new Reflip.RedisAdapter(
 {
     client: redis.createClient(), // or supply `host` and `port` fields
-    namespace: 'key-prefix:'      // optional
+    namespace: 'key-prefix:',     // optional
+    ttl: 60000                    // optional; refresh interval in milliseconds; defaults to 5 minutes
 });
 ```
 
