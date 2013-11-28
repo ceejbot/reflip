@@ -3,6 +3,7 @@
 var
 	_      = require('lodash'),
 	demand = require('must'),
+	fs     = require('fs'),
 	path   = require('path'),
 	redis  = require('redis'),
 	sinon  = require('sinon')
@@ -11,6 +12,8 @@ var
 var Reflip = require('../index');
 var testfile = path.join(__dirname, './mocks/features.json');
 var testFeatures = require('./mocks/features.json');
+
+var file2 = path.join(__dirname, './mocks/f2.json');
 
 describe('Reflip', function()
 {
@@ -219,23 +222,71 @@ describe('Reflip', function()
 			arglist[1].must.equal('Not Found');
 		});
 
+		it('updates its responses', function(done)
+		{
+			var features2 =
+			{
+				"features":
+				[
+					{
+						"name": "aardvarks",
+						"type": "boolean",
+						"enabled": false
+					},
+					{
+						"name": "archaeopteryx",
+						"type": "boolean",
+						"enabled": true
+					},
+					{
+						"name": "aardwolf",
+						"type": "metered",
+						"enabled": true,
+						"chance": 25
+					}
+				]
+			};
+
+			fs.writeFile(file2, JSON.stringify(testFeatures), function(err)
+			{
+				var flipper = new Reflip({ storage: new Reflip.FileAdapter({ filename: file2 }), });
+				flipper.on('ready', blort);
+				var count = 0;
+
+				function blort()
+				{
+					var bar = flipper.features['aardvarks'].check({});
+
+					if (count === 0)
+					{
+						fs.writeFileSync(file2, JSON.stringify(features2));
+						count++;
+					}
+
+					if (bar === false)
+						done();
+				}
+			});
+		});
 	});
 
 	after(function(done)
 	{
-		var r = redis.createClient();
-		var chain = r.multi();
+		fs.unlink(file2, function(err)
+		{
+			var r = redis.createClient();
+			var chain = r.multi();
 
-		chain.del('reflip:ttl');
-		chain.del('reflip:features');
-		_.each(Object.keys(testFeatures.features), function(k)
-		{
-			chain.del('reflip:' + k);
-		});
-		chain.exec(function(err, replies)
-		{
-			done();
+			chain.del('reflip:ttl');
+			chain.del('reflip:features');
+			_.each(Object.keys(testFeatures.features), function(k)
+			{
+				chain.del('reflip:' + k);
+			});
+			chain.exec(function(err, replies)
+			{
+				done();
+			});
 		});
 	});
-
 });
