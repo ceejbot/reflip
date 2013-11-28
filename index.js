@@ -109,19 +109,7 @@ Reflip.prototype.refresh = function refresh()
 
 	var self = this;
 	this.emit('refreshing');
-	self.storage.read()
-	.then(function(response)
-	{
-		self.features = {};
-		_.each(response.features, function(def)
-		{
-			var feature = new Feature(def);
-			self.features[feature.name] = feature;
-		});
-
-		self.emit('ready');
-		return true;
-	});
+	self.storage.refresh();
 };
 
 Reflip.prototype.update = function update(features)
@@ -134,4 +122,5 @@ Reflip.prototype.update = function update(features)
 		var feature = new Feature(def);
 		self.features[feature.name] = feature;
 	});
+	self.emit('ready');
 };
