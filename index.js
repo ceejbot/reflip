@@ -20,6 +20,7 @@ var Reflip = module.exports = function(opts)
 	if (opts.features) this.features = opts.features;
 	if (opts.hasOwnProperty('default')) this.default = opts.default;
 	if (opts.httpcode) this.httpcode = opts.httpcode;
+	this.exportName = opts.exportName || 'check';
 
 	if (opts.storage)
 	{
@@ -53,7 +54,7 @@ Reflip.prototype.flip = function()
 			request.features[k] = v.check(request);
 		});
 
-		request.check = function(name)
+		request[self.exportName] = function(name)
 		{
 			if (!request.features.hasOwnProperty(name))
 				return self.default;

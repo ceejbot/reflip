@@ -63,6 +63,7 @@ The options object may include the following fields:
 - `default`: default response for unknown features; defaults to `false`
 - `httpcode`: the status code to use when blocking requests for disabled features; defaults to 404 
 - `features`: an object pre-defining feature defaults; is overridden after `ttl` milliseconds by the values in remote storage if that is enabled
+- `exportName`: the name of the function to hang onto each request object; use if `check()` would conflict with other Connect middleware
 
 
 ### reflip.register('feature-name', function(request) {})

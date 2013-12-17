@@ -129,34 +129,50 @@ describe('Reflip', function()
 
 		it('returns a function', function()
 		{
-				var middleware = flipper.flip();
-				middleware.must.be.a.function();
+			var middleware = flipper.flip();
+			middleware.must.be.a.function();
 		});
 
 		it('behaves like connect middleware', function()
 		{
-				var middleware = flipper.flip();
-				var request = {}, response = {}, next = sinon.spy();
-				middleware(request, response, next);
+			var middleware = flipper.flip();
+			var request = {}, response = {}, next = sinon.spy();
+			middleware(request, response, next);
 
-				next.calledOnce.must.be.truthy();
+			next.calledOnce.must.be.truthy();
 		});
 
 		it('decorates its first argument with a check function', function(done)
 		{
-				var middleware = flipper.flip();
-				var request = {}, response = {};
-				middleware(request, response, function()
-				{
-					request.check.must.be.a.function();
-					request.features.must.be.an.object();
-					request.features.alpacas.must.be.truthy();
-					request.features.aardvarks.must.be.true();
-					request.features.archaeopteryx.must.equal(request.check('archaeopteryx'));
-					request.check('agouti').must.equal(flipper.default);
-					done();
-				});
+			var middleware = flipper.flip();
+			var request = {}, response = {};
+			middleware(request, response, function()
+			{
+				request.must.have.property('check');
+				request.check.must.be.a.function();
+				request.features.must.be.an.object();
+				request.features.alpacas.must.be.truthy();
+				request.features.aardvarks.must.be.true();
+				request.features.archaeopteryx.must.equal(request.check('archaeopteryx'));
+				request.check('agouti').must.equal(flipper.default);
+				done();
+			});
 		});
+
+		it('obeys its `exportName` option', function(done)
+		{
+			var f2 = new Reflip({ exportName: 'wobble', storage: new Reflip.FileAdapter({ filename: testfile }), });
+
+			var middleware = f2.flip();
+			var request = {}, response = {};
+			middleware(request, response, function()
+			{
+				request.must.have.property('wobble');
+				request.wobble.must.be.a.function();
+				done();
+			});
+		});
+
 	});
 
 	describe('gate()', function()
