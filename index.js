@@ -67,17 +67,21 @@ Reflip.prototype.flip = function()
 	return middleware;
 };
 
-Reflip.prototype.gate = function gate(name)
+Reflip.prototype.gate = function gate(name, failureHandler)
 {
 	var self = this;
 	assert(name && name.length, 'You must provide a feature name');
 
+	var isCustomResponse = typeof failureHandler == 'function';
 	function gateFunc(request, response, next)
 	{
 		if (request.check(name))
 			return next();
 
-		response.send(self.httpcode, http.STATUS_CODES[self.httpcode]);
+		if (!isCustomResponse)
+			return response.send(self.httpcode, http.STATUS_CODES[self.httpcode]);
+
+		failureHandler(request, response);
 	}
 
 	return gateFunc;

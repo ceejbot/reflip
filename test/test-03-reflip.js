@@ -238,6 +238,38 @@ describe('Reflip', function()
 			arglist[1].must.equal('Not Found');
 		});
 
+		it('allows specifying a custom failure handler if the feature is disabled', function()
+		{
+			var req = {}, res = {};
+			req.check = sinon.stub();
+			req.check.returns(false);
+			res.json = sinon.spy();
+			var next = sinon.spy();
+
+			var gater = flipper.gate('aardwolf', function(req, res)
+			{
+				res.json(403,
+				{
+					code: 'ForbiddenError',
+					message: 'This feature is unavailable.'
+				});
+			});
+			gater(req, res, next);
+
+			req.check.calledOnce.must.be.truthy();
+			res.json.calledOnce.must.be.truthy();
+			next.calledOnce.must.be.false();
+
+			var arglist = res.json.args[0];
+			arglist.length.must.equal(2);
+			arglist[0].must.equal(403);
+			arglist[1].must.eql(
+			{
+				code: 'ForbiddenError',
+				message: 'This feature is unavailable.'
+			});
+		});
+
 		it('updates its responses', function(done)
 		{
 			var features2 =
