@@ -11,12 +11,12 @@ Redis-backed or file-backed feature flipping middleware for connect/express.js. 
 ```javascript
 var Reflip = require('reflip'),
     express = require('express');
-  
+
 var reflip = new Reflip(
 {
     storage: new Reflip.RedisAdapter(
-    { 
-        client: redis.createClient(), 
+    {
+        client: redis.createClient(),
         namespace: 'myapp:',
         ttl: 60 * 1000
     }),
@@ -26,7 +26,7 @@ reflip.register('aardvarks', 'custom', function(request)
 {
     return reflip.check('aardvark-enabled') && !!request.user;
 });
-  
+
 var app = express();
 app.use(express.session()); // etc
 app.use(reflip.flip());
@@ -42,7 +42,7 @@ function serveArdvarks(request, response)
         response.redirect('/alpacas');
         return;
     }
-    
+
     response.render('aardvarks');
 }
 
@@ -61,7 +61,7 @@ The options object may include the following fields:
 
 - `storage`: a storage adapter; can be nil if you are operating from a predefined object only
 - `default`: default response for unknown features; defaults to `false`
-- `httpcode`: the status code to use when blocking requests for disabled features; defaults to 404 
+- `httpcode`: the status code to use when blocking requests for disabled features; defaults to 404
 - `features`: an object pre-defining feature defaults; is overridden after `ttl` milliseconds by the values in remote storage if that is enabled
 - `exportName`: the name of the function to hang onto each request object; use if `check()` would conflict with other Connect middleware
 
@@ -88,12 +88,25 @@ The middleware pre-calculates the answers for all feature checks & adds a `check
 
 Looks in the request's cache (in `request.features`) to see if the named feature is turned on or not. Returns a falsey value if this feature is off for this request. Returns a truthy value if it should be enabled. If the feature is of type `grouped`, it will return a string indicating which group this request is in.
 
-### reflip.gate('feature-name')
+### reflip.gate('feature-name', [failureHandler])
 
 Use as middleware for specific routes; responds to the request with `reflip.httpcode` if the feature is not enabled for that request.
 
 ```javascript
 app.get('/anteaters', reflip.gate('anteaters'), serveAnteaters);
+```
+
+Alternatively, you can provide a `failureHandler` function that returns a custom response. The `reflip.httpcode` property will be ignored if a failure handler is specified.
+
+```javascript
+app.get('/anteaters', reflip.gate('anteaters', function(request, response)
+{
+    response.json(403,
+    {
+        code: 'ForbiddenError',
+        message: 'This feature is unavailable.'
+    });
+}), serveAnteaters);
 ```
 
 ### reflip.refresh()
@@ -113,7 +126,7 @@ var feature = new Reflip.Feature(
 });
 ```
 
-Valid types: 
+Valid types:
 
 * `boolean`: on or off.
 * `metered`: the feature has a percent chance of being turned on
