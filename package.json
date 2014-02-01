@@ -34,7 +34,7 @@
 	{
 		"bluebird": "^1.0.1",
 		"lodash":   "^2.4.0",
-		"redis":    "^0.10.1"
+		"redis":    "^0.10.0"
 	},
 	"optionalDependencies":
 	{
