@@ -22,6 +22,8 @@ var Reflip = module.exports = function(opts)
 	if (opts.httpcode) this.httpcode = opts.httpcode;
 	this.exportName = opts.exportName || 'check';
 
+	this.features = {};
+
 	if (opts.storage)
 	{
 		var self = this;
@@ -36,10 +38,10 @@ Reflip.FileAdapter  = FileAdapter;
 Reflip.RedisAdapter = RedisAdapter;
 Reflip.Feature      = Feature;
 
-Reflip.prototype.storage      = null;
-Reflip.prototype.features     = {};
-Reflip.prototype.default      = false;
-Reflip.prototype.httpcode     = 404;
+Reflip.prototype.storage  = null;
+Reflip.prototype.features = null;
+Reflip.prototype.default  = false;
+Reflip.prototype.httpcode = 404;
 
 Reflip.prototype.flip = function()
 {
@@ -120,11 +122,16 @@ Reflip.prototype.update = function update(features)
 {
 	var self = this;
 
-	self.features = {};
 	_.each(features, function(def)
 	{
 		var feature = new Feature(def);
 		self.features[feature.name] = feature;
 	});
 	self.emit('ready');
+};
+
+Reflip.prototype.shutdown = function shutdown()
+{
+	if (this.storage)
+		this.storage.close();
 };

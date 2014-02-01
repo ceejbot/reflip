@@ -108,4 +108,21 @@ describe('RedisAdapter', function()
 			demand(err).be.undefined();
 		}).done();
 	});
+
+	after(function(done)
+	{
+		var r = redis.createClient();
+		var chain = r.multi();
+
+		chain.del('reflip:ttl');
+		chain.del('reflip:features');
+		_.each(Object.keys(testFeatures.features), function(k)
+		{
+			chain.del('reflip:' + k);
+		});
+		chain.exec(function(err, replies)
+		{
+			done();
+		});
+	});
 });

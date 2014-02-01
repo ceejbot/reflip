@@ -17,6 +17,26 @@ var file2 = path.join(__dirname, './mocks/f2.json');
 
 describe('Reflip', function()
 {
+	before(function(done)
+	{
+		var r = redis.createClient();
+		var chain = r.multi();
+
+		var features = [];
+		_.each(testFeatures.features, function(item)
+		{
+			features.push(item.name);
+			chain.hmset('reflip:' + item.name, item);
+		});
+		chain.set('reflip:ttl', testFeatures.ttl);
+		chain.sadd('reflip:features', features);
+
+		chain.exec(function(err, replies)
+		{
+			done();
+		});
+	});
+
 	describe('with file adapter', function()
 	{
 		it('can be constructed', function()
@@ -297,13 +317,14 @@ describe('Reflip', function()
 
 			fs.writeFile(file2, JSON.stringify(testFeatures), function(err)
 			{
+				demand(err).not.exist();
+
 				var flipper = new Reflip({ storage: new Reflip.FileAdapter({ filename: file2 }), });
-				flipper.on('ready', blort);
 				var count = 0;
 
 				function blort()
 				{
-					var bar = flipper.features['aardvarks'].check({});
+					var bar = flipper.features.aardvarks.check({});
 
 					if (count === 0)
 					{
@@ -312,9 +333,19 @@ describe('Reflip', function()
 					}
 
 					if (bar === false)
+					{
+						flipper.shutdown();
 						done();
+					}
 				}
+
+				flipper.on('ready', blort);
 			});
+		});
+
+		after(function()
+		{
+			flipper.shutdown();
 		});
 	});
 
@@ -322,6 +353,8 @@ describe('Reflip', function()
 	{
 		fs.unlink(file2, function(err)
 		{
+			demand(err).not.exist();
+
 			var r = redis.createClient();
 			var chain = r.multi();
 

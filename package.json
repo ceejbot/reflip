@@ -1,6 +1,6 @@
 {
 	"name":        "reflip",
-	"version":     "0.2.3",
+	"version":     "0.2.4",
 	"description": "key-value-store-backed feature flipping middleware for connect/express.js",
 	"author":      "C J Silverio <ceejceej@gmail.com>",
 	"license":     "MIT",
@@ -17,11 +17,11 @@
 		"test-suite": "mocha -R spec test/*.js",
 		"test-cov": "mocha --require blanket -R travis-cov test/*.js",
 		"coveralls":  "NODE_ENV=test YOURPACKAGE_COVERAGE=1 ./node_modules/.bin/mocha --require blanket --reporter mocha-lcov-reporter test/*.js | ./node_modules/coveralls/bin/coveralls.js",
-		"coverage": "mocha --require blanket -R html-cov test/*.js > test/coverage.html",
-		"blanket":
-		{
-			"pattern": "//^((?!\/node_modules|test\/).)*$/ig"
-		},
+		"coverage": "mocha --require blanket -R html-cov test/*.js > test/coverage.html"
+	},
+	"config":
+	{
+		"blanket": { "pattern": "//^((?!\/node_modules|test\/).)*$/ig" },
 		"travis-cov": { "threshold": 80 }
 	},
 	"repository":
@@ -32,9 +32,9 @@
 	"bugs": { "url": "https://github.com/ceejbot/reflip/issues" },
 	"dependencies":
 	{
-		"bluebird": "~0.10.9",
-		"lodash":   "~2.4.0",
-		"redis":    "~0.9.1"
+		"bluebird": "^1.0.1",
+		"lodash":   "^2.4.0",
+		"redis":    "^0.10.1"
 	},
 	"optionalDependencies":
 	{

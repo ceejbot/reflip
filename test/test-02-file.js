@@ -95,12 +95,15 @@ describe('FileAdapter', function()
 	{
 		fs.writeFile(file2, JSON.stringify(features1), function(err)
 		{
+			demand(err).not.exist();
+
 			var obj = new FileAdapter({ filename: file2 });
 			obj.must.have.property('watcher');
 			obj.on('update', function(features)
 			{
 				features.must.be.an.array();
 				features.length.must.equal(3);
+				obj.close();
 				done();
 			});
 
