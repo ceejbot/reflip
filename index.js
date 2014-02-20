@@ -46,24 +46,23 @@ Reflip.prototype.httpcode = 404;
 Reflip.prototype.flip = function()
 {
 	var self = this;
-	var defEnabled = this.default;
 
 	function middleware(request, response, next)
 	{
+		var features = _.transform(self.features, function(features, v, k)
+		{
+			features[k] = v.check(request);
+		}, {});
+
 		request[self.exportName] = function(name)
 		{
 			if (name == null)
-			{
-				return _.transform(self.features, function(features, v, k)
-				{
-					features[k] = v.check(request);
-				}, {});
-			}
+				return features;
 
-			if (!_.has(self.features, name))
+			if (!_.has(features, name))
 				return self.default;
 
-			return self.features[name].check(request);
+			return features[name];
 		};
 		next();
 	}
