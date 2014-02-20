@@ -18,7 +18,7 @@ var Reflip = module.exports = function(opts)
 	assert(opts.storage || opts.features, 'You must pass either storage options or a pre-set feature object');
 
 	if (opts.features) this.features = opts.features;
-	if (opts.hasOwnProperty('default')) this.default = opts.default;
+	if (_.has(opts, 'default')) this.default = opts.default;
 	if (opts.httpcode) this.httpcode = opts.httpcode;
 	this.exportName = opts.exportName || 'check';
 
