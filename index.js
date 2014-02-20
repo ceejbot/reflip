@@ -50,18 +50,20 @@ Reflip.prototype.flip = function()
 
 	function middleware(request, response, next)
 	{
-		request.features = {};
-		_.each(self.features, function(v, k)
-		{
-			request.features[k] = v.check(request);
-		});
-
 		request[self.exportName] = function(name)
 		{
-			if (!request.features.hasOwnProperty(name))
+			if (name == null)
+			{
+				return _.transform(self.features, function(features, v, k)
+				{
+					features[k] = v.check(request);
+				}, {});
+			}
+
+			if (!_.has(self.features, name))
 				return self.default;
 
-			return request.features[name];
+			return self.features[name].check(request);
 		};
 		next();
 	}
