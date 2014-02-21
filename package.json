@@ -1,11 +1,16 @@
 {
 	"name":        "reflip",
-	"version":     "0.3.0",
+	"version":     "1.0.0",
 	"description": "key-value-store-backed feature flipping middleware for connect/express.js",
 	"author":      "C J Silverio <ceejceej@gmail.com>",
 	"license":     "MIT",
 	"main":        "index.js",
 	"keywords":    [ "connect", "express.js", "middleware", "feature", "feature-flip", "a/b", "testing", "redis" ],
+	"contributors":
+	[
+		"C J Silverio <ceejceej@gmail.com>",
+		"Kit Cambridge <kit@cambridge.be>"
+	],
 	"directories":
 	{
 		"test": "test",
