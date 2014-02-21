@@ -170,10 +170,12 @@ describe('Reflip', function()
 			{
 				request.must.have.property('check');
 				request.check.must.be.a.function();
-				request.features.must.be.an.object();
-				request.features.alpacas.must.be.truthy();
-				request.features.aardvarks.must.be.true();
-				request.features.archaeopteryx.must.equal(request.check('archaeopteryx'));
+
+				var features = request.check();
+				features.must.be.an.object();
+				features.alpacas.must.be.truthy();
+				features.aardvarks.must.be.true();
+				features.archaeopteryx.must.equal(request.check('archaeopteryx'));
 				request.check('agouti').must.equal(flipper.default);
 				done();
 			});

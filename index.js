@@ -18,7 +18,7 @@ var Reflip = module.exports = function(opts)
 	assert(opts.storage || opts.features, 'You must pass either storage options or a pre-set feature object');
 
 	if (opts.features) this.features = opts.features;
-	if (opts.hasOwnProperty('default')) this.default = opts.default;
+	if (_.has(opts, 'default')) this.default = opts.default;
 	if (opts.httpcode) this.httpcode = opts.httpcode;
 	this.exportName = opts.exportName || 'check';
 
@@ -46,22 +46,23 @@ Reflip.prototype.httpcode = 404;
 Reflip.prototype.flip = function()
 {
 	var self = this;
-	var defEnabled = this.default;
 
 	function middleware(request, response, next)
 	{
-		request.features = {};
-		_.each(self.features, function(v, k)
+		var features = _.transform(self.features, function(features, v, k)
 		{
-			request.features[k] = v.check(request);
-		});
+			features[k] = v.check(request);
+		}, {});
 
 		request[self.exportName] = function(name)
 		{
-			if (!request.features.hasOwnProperty(name))
+			if (name == null)
+				return features;
+
+			if (!_.has(features, name))
 				return self.default;
 
-			return request.features[name];
+			return features[name];
 		};
 		next();
 	}

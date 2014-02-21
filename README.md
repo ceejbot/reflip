@@ -86,7 +86,11 @@ The middleware pre-calculates the answers for all feature checks & adds a `check
 
 ### request.check('feature-name')
 
-Looks in the request's cache (in `request.features`) to see if the named feature is turned on or not. Returns a falsey value if this feature is off for this request. Returns a truthy value if it should be enabled. If the feature is of type `grouped`, it will return a string indicating which group this request is in.
+Determines if the named feature is turned on or not. Returns a falsey value if this feature is off for this request. Returns a truthy value if it should be enabled. If the feature is of type `grouped`, it will return a string indicating which group this request is in.
+
+### request.check()
+
+Returns the internal cache of all feature names and their corresponding states for this request. Note that mutating the cache will affect the results returned by `request.check('feature-name')`.
 
 ### reflip.gate('feature-name', [failureHandler])
 
