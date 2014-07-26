@@ -1,6 +1,12 @@
-/*global describe:true, it:true, before:true, after:true */
+'use strict';
 
 var
+    _        = require('lodash'),
+    lab      = require('lab'),
+    describe = lab.describe,
+    it       = lab.it,
+    before   = lab.before,
+    after    = lab.after,
 	demand = require('must'),
 	fs     = require('fs'),
 	path   = require('path')
@@ -36,31 +42,34 @@ var features2 =
 
 describe('FileAdapter', function()
 {
-	it('requires an options object', function()
+	it('requires an options object', function(done)
 	{
 		function shouldThrow()
 		{
 			var obj = new FileAdapter();
 		}
 		shouldThrow.must.throw();
+		done();
 	});
 
-	it('requires options.filename', function()
+	it('requires options.filename', function(done)
 	{
 		function shouldThrow()
 		{
 			var obj = new FileAdapter({});
 		}
 		shouldThrow.must.throw();
+		done();
 	});
 
-	it('can be constructed', function()
+	it('can be constructed', function(done)
 	{
 		var obj = new FileAdapter({ filename: testfile });
 		obj.must.be.truthy();
+		done();
 	});
 
-	it('read() returns a promise', function()
+	it('read() returns a promise', function(done)
 	{
 		var obj = new FileAdapter({ filename: testfile });
 		var result = obj.read();
@@ -68,6 +77,7 @@ describe('FileAdapter', function()
 		result.must.be.an.object();
 		result.must.have.property('then');
 		result.then.must.be.a.function();
+		done();
 	});
 
 	it('read() re-reads the file', function(done)

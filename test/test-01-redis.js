@@ -1,10 +1,15 @@
-/*global describe:true, it:true, before:true, after:true */
+'use strict';
 
 var
-	_      = require('lodash'),
-	demand = require('must'),
-	redis  = require('redis'),
-	fs     = require('fs')
+    _        = require('lodash'),
+    lab      = require('lab'),
+    describe = lab.describe,
+    it       = lab.it,
+    before   = lab.before,
+    after    = lab.after,
+    demand   = require('must'),
+    redis    = require('redis'),
+    fs       = require('fs')
 	;
 
 var RedisAdapter = require('../lib/redis');
@@ -33,26 +38,29 @@ describe('RedisAdapter', function()
 		});
 	});
 
-	it('requires an options object', function()
+	it('requires an options object', function(done)
 	{
 		function shouldThrow() { var r = new RedisAdapter(); }
 		shouldThrow.must.throw();
+		done();
 	});
 
-	it('requires client or host/port in options', function()
+	it('requires client or host/port in options', function(done)
 	{
 		function shouldThrow() { var r = new RedisAdapter({}); }
 		shouldThrow.must.throw();
+		done();
 	});
 
-	it('respects the host/port options', function()
+	it('respects the host/port options', function(done)
 	{
 		var r = new RedisAdapter({ host: 'localhost', port: 6379 });
 		r.must.have.property('client');
 		r.client.must.be.an.object();
+		done();
 	});
 
-	it('respects the client option', function()
+	it('respects the client option', function(done)
 	{
 		var client = redis.createClient();
 		var r = new RedisAdapter({ client: client });
@@ -60,9 +68,10 @@ describe('RedisAdapter', function()
 		r.client.must.be.an.object();
 		r.client.must.equal(client);
 		client.end();
+		done();
 	});
 
-	it('respects the namespace option', function()
+	it('respects the namespace option', function(done)
 	{
 		var client = redis.createClient();
 		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
@@ -71,9 +80,10 @@ describe('RedisAdapter', function()
 		t.must.match(/^foozles:/);
 
 		client.end();
+		done();
 	});
 
-	it('read() returns a promise', function()
+	it('read() returns a promise', function(done)
 	{
 		var client = redis.createClient();
 		var r = new RedisAdapter({ client: client, namespace: 'foozles:' });
@@ -83,6 +93,7 @@ describe('RedisAdapter', function()
 		result.must.be.an.object();
 		result.must.have.property('then');
 		result.then.must.be.a.function();
+		done();
 	});
 
 	it('read() reads the hashes', function(done)
