@@ -2,7 +2,8 @@
 
 Redis-backed or file-backed feature flipping middleware for connect/express.js. It should be straightforward to write additional storage adapters.
 
-[![Build Status](https://secure.travis-ci.org/ceejbot/reflip.png)](http://travis-ci.org/ceejbot/reflip) [![Dependencies](https://david-dm.org/ceejbot/reflip.png)](https://david-dm.org/ceejbot/reflip) [![Coverage Status](https://coveralls.io/repos/ceejbot/reflip/badge.png)](https://coveralls.io/r/ceejbot/reflip)
+
+[![Tests](http://img.shields.io/travis/ceejbot/reflip.svg?style=flat)](http://travis-ci.org/ceejbot/reflip) ![Coverage](http://img.shields.io/badge/coverage-93%25-green.svg?style=flat)  [![Dependencies](http://img.shields.io/david/ceejbot/reflip.svg?style=flat)](https://david-dm.org/ceejbot/reflip)
 
 [![NPM](https://nodei.co/npm/reflip.png)](https://nodei.co/npm/reflip/)
 
