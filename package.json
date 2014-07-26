@@ -1,49 +1,54 @@
 {
-	"name":        "reflip",
-	"version":     "1.0.0",
-	"description": "key-value-store-backed feature flipping middleware for connect/express.js",
-	"author":      "C J Silverio <ceejceej@gmail.com>",
-	"license":     "MIT",
-	"main":        "index.js",
-	"keywords":    [ "connect", "express.js", "middleware", "feature", "feature-flip", "a/b", "testing", "redis" ],
-	"contributors":
-	[
-		"C J Silverio <ceejceej@gmail.com>",
-		"Kit Cambridge <kit@cambridge.be>"
-	],
-	"directories":
-	{
-		"test": "test",
-		"lib":  "lib"
-	},
-	"scripts":
-	{
-		"test": "lab -v -c -t 90 test/*.js"
-	},
-	"config":
-	{
-		"blanket": { "pattern": "//^((?!\/node_modules|test\/).)*$/ig" }
-	},
-	"repository":
-	{
-		"type": "git",
-		"url": "git://github.com/ceejbot/reflip.git"
-	},
-	"bugs": { "url": "https://github.com/ceejbot/reflip/issues" },
-	"dependencies":
-	{
-		"bluebird": "^2.2.2",
-		"lodash":   "^2.4.0",
-		"redis":    "^0.11.0"
-	},
-	"optionalDependencies":
-	{
-		"hiredis": "^0.1.17"
-	},
-	"devDependencies":
-	{
-        "lab":                 "latest",
-        "must":                "latest",
-        "sinon":               "latest"
-	}
+  "name": "reflip",
+  "version": "1.1.0",
+  "description": "key-value-store-backed feature flipping middleware for connect/express.js",
+  "author": "C J Silverio <ceejceej@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "keywords": [
+    "connect",
+    "express.js",
+    "middleware",
+    "feature",
+    "feature-flip",
+    "a/b",
+    "testing",
+    "redis"
+  ],
+  "contributors": [
+    "C J Silverio <ceejceej@gmail.com>",
+    "Kit Cambridge <kit@cambridge.be>"
+  ],
+  "directories": {
+    "test": "test",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "lab -v -c -t 90 test/*.js"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "//^((?!/node_modules|test/).)*$/ig"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ceejbot/reflip.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ceejbot/reflip/issues"
+  },
+  "dependencies": {
+    "bluebird": "^2.2.2",
+    "lodash": "^2.4.0",
+    "redis": "^0.11.0"
+  },
+  "optionalDependencies": {
+    "hiredis": "^0.1.17"
+  },
+  "devDependencies": {
+    "lab": "latest",
+    "must": "latest",
+    "sinon": "latest"
+  }
 }
