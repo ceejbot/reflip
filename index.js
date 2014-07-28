@@ -78,7 +78,7 @@ Reflip.prototype.gate = function gate(name, failureHandler)
 	var isCustomResponse = typeof failureHandler == 'function';
 	function gateFunc(request, response, next)
 	{
-		if (request.check(name))
+		if (request[self.exportName](name))
 			return next();
 
 		if (!isCustomResponse)
