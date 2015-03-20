@@ -24,7 +24,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "lab -v -c -t 90 test/*.js"
+    "test": "mocha -R spec test/*.js"
   },
   "config": {
     "blanket": {
@@ -47,8 +47,8 @@
     "hiredis": "^0.1.17"
   },
   "devDependencies": {
-    "lab": "latest",
-    "must": "latest",
+    "mocha": "~2.1.0",
+    "must": "~0.12.0",
     "sinon": "latest"
   }
 }

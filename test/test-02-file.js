@@ -1,15 +1,11 @@
+/*global describe:true, it:true, before:true, after:true */
 'use strict';
 
 var
-    _        = require('lodash'),
-    lab      = require('lab'),
-    describe = lab.describe,
-    it       = lab.it,
-    before   = lab.before,
-    after    = lab.after,
-	demand = require('must'),
-	fs     = require('fs'),
-	path   = require('path')
+    _      = require('lodash'),
+    demand = require('must'),
+    fs     = require('fs'),
+    path   = require('path')
 	;
 
 var FileAdapter = require('../lib/file');
