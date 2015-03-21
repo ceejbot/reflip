@@ -352,6 +352,7 @@ describe('Reflip', function()
 					if (bar === false)
 					{
 						flipper.shutdown();
+						flipper.removeListener('ready', blort);
 						done();
 					}
 				}
