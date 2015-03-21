@@ -39,12 +39,12 @@
     "url": "https://github.com/ceejbot/reflip/issues"
   },
   "dependencies": {
-    "bluebird": "^2.2.2",
-    "lodash": "^2.4.0",
-    "redis": "^0.11.0"
+    "bluebird": "~2.9.14",
+    "lodash": "~3.5.0",
+    "redis": "~0.12.1"
   },
   "optionalDependencies": {
-    "hiredis": "^0.1.17"
+    "hiredis": "~0.2.0"
   },
   "devDependencies": {
     "mocha": "~2.1.0",
