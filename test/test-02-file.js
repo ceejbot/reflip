@@ -105,7 +105,7 @@ describe('FileAdapter', function()
 
 			var obj = new FileAdapter({ filename: file2 });
 			obj.must.have.property('watcher');
-			obj.on('update', function(features)
+			obj.once('update', function onUpdate(features)
 			{
 				features.must.be.an.array();
 				features.length.must.equal(3);
